@@ -166,8 +166,8 @@ def main():
     username = input("Enter username: ")
     password = input("Enter password: ")
 
-    players_to_add = ['Rams D/ST']
-    players_to_drop = ['Cowboys D/ST']
+    players_to_add = ['Harrison Butker']
+    players_to_drop = ['Nick Folk']
 
     pause.until(datetime(2022, 9, 28, 3))
 
