@@ -6,7 +6,48 @@ This program queries the ESPN API until desired player is a free agent. Once thi
 
 There is quite a bit left to do, and progress has slowed somewhat after I discovered that my league settings this year update waiver position weekly based on performance (meaning there is little benefit to adding from free agency vs. claiming from waivers). 
 
-To use currently, change player to add and player to drop in the main function. Additionally, change the time to begin querying in the same location. A cookies file containing the swid key and espn_2 key is required, and a metadata file with leagueID, seasonID, and teamID is required as well. The construction method for these files has not yet been implemented, but they are just json files with your relevant personal information in it. 
+# Usage
+On running the program, it will check if the cookies file (for querying ESPN) and the ESPN league info file (for storing information about your league) exist. 
+
+If the cookies file does not exist, the library *browser_cookie* is used to collect relevant cookies from Chrome. This may prompt you for permission (especially if you are on Mac). 
+
+![Cookie Permission](images/cookies_permission.png "Cookie Permission")
+
+To get the ESPN league info, login to your team page and collect the URL. Input this when prompted. In the following example, the X's would be replaced with your relevant infroamtion.
+
+```angular2html
+https://fantasy.espn.com/football/team?leagueId=XXXXXXXXXX&teamId=X&seasonId=XXXX
+```
+
+Next, input username and password. These will not be stored for security purposes.
+
+After this, you are prompted to specify the date for the transaction to occur. As this is designed to allow you to schedule transactions in advance, it is up to you when these occur. Format example:
+
+```angular2html
+What day should this be scheduled for? 9/28
+```
+
+Finally, the player(s) to add and drop are to be input. This should be a comma-separated list of names with each index corresponding to the players involved in that particular transaction. In the following example, Harrison Butker will be added and Nick Folk will be dropped. Similarly, Najee Harris will be added and Jonathan Taylor will be dropped. 
+
+```angular2html
+Input players to add: Harrison Butker, Najee Harris
+Input players to drop: Nick Folk, Jonathan Taylor
+```
+
+Now user input is finished! The program will now pause until we reach the specified date.
+
+At 3 am on that date, the program will begin querying ESPN to determine if the first transaction is yet a free agent. Until this occurs, it keeps querying every 5 minutes. 
+
+Once the player is a free agent, testing software (Selenium) will open a chrome browser, sign in to the user account, and perform the requested transaction. Any issues will cause that transaction to be aborted. 
+
+The player is now yours without having to use a waiver!
+
+# Library Dependencies
+pandas 1.5.0
+
+selenium 4.4.3
+
+browsercookie 0.7.7
 
 # TODO
 - Create GUI for inputting information

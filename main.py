@@ -202,10 +202,14 @@ def main():
     username = input("Enter username: ")
     password = input("Enter password: ")
 
-    players_to_add = input("Input players to add (comma-separated and index corresponding with player to add): ").split(",")
-    players_to_drop = input("Input players to add (comma-separated and index corresponding with player to drop): ").split(",")
+    players_to_add = input("Input players to add: ").split(",")
+    for player in players_to_add:
+        player.strip()
+    players_to_drop = input("Input players to drop: ").split(",")
+    for player in players_to_drop:
+        player.strip()
 
-    date_to_add = input("What day should this be scheduled for? (ex. 9/28) ")
+    date_to_add = input("What day should this be scheduled for? ")
     month = date_to_add.split("/")[0]
     date = date_to_add.split("/")[-1]
     pause.until(datetime(2022, int(month), int(date), 3))
