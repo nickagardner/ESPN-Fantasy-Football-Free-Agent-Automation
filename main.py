@@ -1,13 +1,10 @@
 """
 TODO
 - Create GUI for inputting information
-- Figure out a more elegant way to get swid/espn_2 cookie and store
-- Determine where and how to store ESPN league information
 - Rerun is_free_agent until the api retries exceeded error occurs again.
   Adjust the except clause to only include this error.
 - Add capability to handle adding (rather than just swapping)
-- Clean up datetime pausing (will be part of GUI)
-- For defenses, choose a random player to query to determine free agency status (find one through waivers request)
+- Figure out how to determine if defense is a free agent
 """
 
 import time
@@ -43,7 +40,6 @@ def is_player_free_agent(player_to_add, leagueID, seasonID, cookies):
                      },
                      headers=headers,
                      cookies=cookies)
-    print(r.json())
 
     player_status = r.json()['players'][0]['status']
 
@@ -63,7 +59,7 @@ def swap_player(player_to_add, player_to_drop, username, password, leagueID, tea
     :param leagueID: ID number for league
     :param teamID: ID number for team
     :param seasonID: ID number for season (the year)
-    :return:
+    :return: None
     """
     # Selenium imports
     from selenium import webdriver
@@ -138,6 +134,52 @@ def swap_player(player_to_add, player_to_drop, username, password, leagueID, tea
     time.sleep(2)
 
 
+def create_cookies_file():
+    """
+    Helper function for creating cookies file if one does not already exist.
+    Requests permission from Chrome to look through cookies.
+    :return: None
+    """
+    import browsercookie
+    print("Unable to find cookies file. Will request from chrome...")
+    cj = browsercookie.chrome()
+    SWID = None
+    espn_s2 = None
+    for cookie in cj:
+        if cookie.name == "SWID":
+            SWID = cookie.value
+        elif cookie.name == "espn_s2":
+            espn_s2 = cookie.value
+
+    if SWID is None or espn_s2 is None:
+        print("Unable to get cookies from chrome for ESPN. Check if you have visited the ESPN website and logged "
+              "in.")
+        return
+
+    write_string = '{"swid": "{' + SWID + '}",\n"espn_s2": "' + espn_s2 + '"}'
+    cookies_file = open("cookies.json", "w")
+    cookies_file.write(write_string)
+    cookies_file.close()
+    print("Cookies file created.")
+
+
+def create_league_file():
+    """
+    Helper function that creates file with info about the fantasy league.
+    Operates off of the URL inputted by the user from their team page.
+    :return: None
+    """
+    import re
+    league_url = input("No league metadata file found. Please input URL after logging in to ESPN fantasy team page: ")
+    leagueID = re.search("leagueId=\d+", league_url).group(0).split("=")[-1]
+    teamID = re.search("teamId=\d+", league_url).group(0).split("=")[-1]
+    seasonID = re.search("seasonId=\d+", league_url).group(0).split("=")[-1]
+    write_string = '{"leagueID" :  "' + leagueID + '",\n "teamID" : "' + teamID + '",\n "seasonID" : "' + seasonID + '"} '
+    league_metadata_file = open("league_info.json", "w")
+    league_metadata_file.write(write_string)
+    league_metadata_file.close()
+
+
 def main():
     import pause
     from datetime import datetime
@@ -145,31 +187,30 @@ def main():
     import os
 
     # Getting ESPN cookies to request data from api
-    if os.path.exists("cookies.json"):
-        cookies_file = open("cookies.json")
-        cookies = json.load(cookies_file)
-    else:
-        # TODO: Generate cookies file
-        return
+    if not os.path.exists("cookies.json"):
+        create_cookies_file()
+    cookies_file = open("cookies.json")
+    cookies = json.load(cookies_file)
 
     # Getting store metadata about league
-    if os.path.exists("league_info.json"):
-        league_metadata_file = open("league_info.json")
-        league_metadata = json.load(league_metadata_file)
-        leagueID = league_metadata['leagueID']
-        teamID = league_metadata['teamID']
-        seasonID = league_metadata['seasonID']
-    else:
-        # TODO: Generate league_info file
-        return
+    if not os.path.exists("league_info.json"):
+        create_league_file()
+    league_metadata_file = open("league_info.json")
+    league_metadata = json.load(league_metadata_file)
+    leagueID = league_metadata['leagueID']
+    teamID = league_metadata['teamID']
+    seasonID = league_metadata['seasonID']
 
     username = input("Enter username: ")
     password = input("Enter password: ")
 
-    players_to_add = ['Harrison Butker']
-    players_to_drop = ['Nick Folk']
+    players_to_add = input("Input players to add (comma-separated and index corresponding with player to add): ").split(",")
+    players_to_drop = input("Input players to add (comma-separated and index corresponding with player to drop): ").split(",")
 
-    pause.until(datetime(2022, 9, 28, 3))
+    date_to_add = input("What day should this be scheduled for? (ex. 9/28) ")
+    month = date_to_add.split("/")[0]
+    date = date_to_add.split("/")[-1]
+    pause.until(datetime(2022, int(month), int(date), 3))
 
     for transaction_idx in range(len(players_to_add)):
         is_free_agent = is_player_free_agent(players_to_add[transaction_idx], leagueID, seasonID, cookies)
