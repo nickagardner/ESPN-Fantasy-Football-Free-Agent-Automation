@@ -1,10 +1,8 @@
 """
-TODO
-- Create GUI for inputting information
-- Rerun is_free_agent until the api retries exceeded error occurs again.
-  Adjust the except clause to only include this error.
-- Add capability to handle adding (rather than just swapping)
-- Figure out how to determine if defense is a free agent
+File: main.py
+Author: Nick Gardner <nag6650@rit.edu>
+
+Simple implementation to swap free agents at scheduled time for the ESPN fantasy football platform.
 """
 
 import time

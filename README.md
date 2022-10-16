@@ -10,10 +10,7 @@ To use currently, change player to add and player to drop in the main function. 
 
 # TODO
 - Create GUI for inputting information
-- Figure out a more elegant way to get swid/espn_2 cookie and store
-- Determine where and how to store ESPN league information
 - Rerun is_free_agent until the api retries exceeded error occurs again.
   Adjust the except clause to only include this error.
 - Add capability to handle adding (rather than just swapping)
-- Clean up datetime pausing (will be part of GUI)
-- For defenses, choose a random player to query to determine free agency status
+- Figure out how to determine if defense is a free agent
