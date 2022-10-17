@@ -4,6 +4,9 @@ This program is intended as a very simple implementation to allow obsessed fanta
 
 This program queries the ESPN API until desired player is a free agent. Once this occurs, testing software (selenium) is used to sign in to the ESPN fantasy website and add the desired player.
 
+![Interface](images/free_agent_text_interface.png "Interface")
+![Chrome Player Add](images/chrome_add_player.png "Chrome Player Add")
+
 There is quite a bit left to do, and progress has slowed somewhat after I discovered that my league settings this year update waiver position weekly based on performance (meaning there is little benefit to adding from free agency vs. claiming from waivers). 
 
 # Usage
@@ -21,17 +24,17 @@ https://fantasy.espn.com/football/team?leagueId=XXXXXXXXXX&teamId=X&seasonId=XXX
 
 Next, input username and password. These will not be stored for security purposes.
 
-After this, you are prompted to specify the date for the transaction to occur. As this is designed to allow you to schedule transactions in advance, it is up to you when these occur. Format example:
-
-```angular2html
-What day should this be scheduled for? 9/28
-```
-
-Finally, the player(s) to add and drop are to be input. This should be a comma-separated list of names with each index corresponding to the players involved in that particular transaction. In the following example, Harrison Butker will be added and Nick Folk will be dropped. Similarly, Najee Harris will be added and Jonathan Taylor will be dropped. 
+After this, the player(s) to add and drop are to be input. This should be a comma-separated list of names with each index corresponding to the players involved in that particular transaction. In the following example, Harrison Butker will be added and Nick Folk will be dropped. Similarly, Najee Harris will be added and Jonathan Taylor will be dropped. 
 
 ```angular2html
 Input players to add: Harrison Butker, Najee Harris
 Input players to drop: Nick Folk, Jonathan Taylor
+```
+
+Finally, you are prompted to specify the date for the transaction to occur. As this is designed to allow you to schedule transactions in advance, it is up to you when these occur. Format example:
+
+```angular2html
+What day should this be scheduled for? 9/28
 ```
 
 Now user input is finished! The program will now pause until we reach the specified date.
